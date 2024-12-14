@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Input Control</title>
+    <title>屏幕控制</title>
     <style>
         body {
             margin: 0;
@@ -15,6 +15,7 @@
             background: linear-gradient(135deg, #1f4037, #99f2c8);
             font-family: 'Arial', sans-serif;
             color: #fff;
+            position: relative; /* 确保通知框相对于body定位 */
         }
 
         h1 {
@@ -60,23 +61,39 @@
             transform: scale(1.05);
         }
 
-        .status {
-            margin-top: 2rem;
-            font-size: 1.5rem;
-            text-align: center;
+        /* 新增：通知框样式 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #333;
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translateY(-50px);
+            z-index: 1000;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
 <body>
-    <h1>Text Input Control</h1>
+    <h1>屏幕控制</h1>
     <div class="button-container">
-        <input type="text" id="textInput" placeholder="Enter text here...">
-        <button id="submit">Submit</button>
+        <input type="text" id="textInput" placeholder="请输入文本...">
+        <button id="submit">提交</button>
     </div>
-    <div class="status" id="status">Status: Ready</div>
+
+    <!-- 新增：通知框 -->
+    <div class="notification" id="notification"></div>
 
     <script>
-        const statusDiv = document.getElementById('status');
+        const notificationDiv = document.getElementById('notification');
 
         function sendPostRequest(cmd, value) {
             fetch('/api/cmd', {
@@ -88,11 +105,19 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    statusDiv.textContent = `Status: ${data.message || 'Success'}`;
+                    showNotification(`状态：${data.message || '成功'}`);
                 })
                 .catch(error => {
-                    statusDiv.textContent = `Status: Error - ${error.message}`;
+                    showNotification(`状态：错误 - ${error.message}`);
                 });
+        }
+
+        function showNotification(message) {
+            notificationDiv.textContent = message;
+            notificationDiv.classList.add('show');
+            setTimeout(() => {
+                notificationDiv.classList.remove('show');
+            }, 3000); // 3秒后移除通知
         }
 
         document.getElementById('submit').addEventListener('click', () => {
@@ -100,10 +125,9 @@
             if (textInput.trim()) {
                 sendPostRequest(2, textInput);
             } else {
-                statusDiv.textContent = 'Status: Please enter some text!';
+                showNotification('状态：请输入一些文本！');
             }
         });
     </script>
 </body>
 </html>
-

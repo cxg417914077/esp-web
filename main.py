@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from fastapi.responses import HTMLResponse
 import json
 from paho.mqtt import client as mqtt_client
+from fastapi.staticfiles import StaticFiles
 
 # MQTT 配置
 BROKER = "broker.emqx.io"
@@ -14,7 +15,7 @@ TOPIC = "cxg/mqtt"
 
 # FastAPI 实例
 app = FastAPI()
-
+app.mount("/", StaticFiles(directory="templates", html=True), name="static")
 # Pydantic 模型
 class Command(BaseModel):
     cmd: int
@@ -44,21 +45,15 @@ async def control_device(command: Command):
         payload = command.dict()
         mqtt_client.publish(TOPIC, json.dumps(payload))
         print(f"Published: {payload} to topic {TOPIC}")
-        return {"message": "MQTT message sent successfully"}
+        return {"message": "消息下发成功"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 # 提供 HTML 页面
-@app.get("/led", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse)
 async def server():
-    html_file = open("index.html", 'r').read()
-    return html_file
-
-
-@app.get("/lcd", response_class=HTMLResponse)
-async def server():
-    html_file = open("light_control_text_input.html", 'r').read()
+    html_file = open("templates/index.html", 'r').read()
     return html_file
 
 
