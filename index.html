@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Control</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1f4037, #99f2c8);
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 30px;
+            padding: 15px 30px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 15px rgba(255, 255, 255, 0.4);
+        }
+
+        button:active {
+            transform: scale(1.05);
+        }
+
+        button#on {
+            background: linear-gradient(45deg, #00c6ff, #0072ff);
+        }
+
+        button#off {
+            background: linear-gradient(45deg, #f7971e, #ffd200);
+        }
+
+        button#switch {
+            background: linear-gradient(45deg, #9d50bb, #6e48aa);
+        }
+
+        .status {
+            margin-top: 2rem;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Light Control</h1>
+    <div class="button-container">
+        <button id="on">Turn On</button>
+        <button id="off">Turn Off</button>
+        <button id="switch">Toggle</button>
+    </div>
+    <div class="status" id="status">Status: Ready</div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+
+        function sendPostRequest(cmd, value) {
+            fetch('/api/led', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ cmd, value }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    statusDiv.textContent = `Status: ${data.message || 'Success'}`;
+                })
+                .catch(error => {
+                    statusDiv.textContent = `Status: Error - ${error.message}`;
+                });
+        }
+
+        document.getElementById('on').addEventListener('click', () => sendPostRequest(1, 'on'));
+        document.getElementById('off').addEventListener('click', () => sendPostRequest(1, 'off'));
+        document.getElementById('switch').addEventListener('click', () => sendPostRequest(1, 'switch'));
+    </script>
+</body>
+</html>
