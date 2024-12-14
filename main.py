@@ -15,7 +15,7 @@ TOPIC = "cxg/mqtt"
 
 # FastAPI 实例
 app = FastAPI()
-app.mount("/", StaticFiles(directory="templates", html=True), name="static")
+app.mount("/html", StaticFiles(directory="templates", html=True), name="static")
 # Pydantic 模型
 class Command(BaseModel):
     cmd: int
