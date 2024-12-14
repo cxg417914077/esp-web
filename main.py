@@ -38,7 +38,7 @@ mqtt_client = connect_mqtt()
 mqtt_client.loop_start()
 
 # 处理 POST 请求
-@app.post("/api/led")
+@app.post("/api/cmd")
 async def control_device(command: Command):
     try:
         payload = command.dict()
@@ -53,6 +53,12 @@ async def control_device(command: Command):
 @app.get("/led", response_class=HTMLResponse)
 async def server():
     html_file = open("index.html", 'r').read()
+    return html_file
+
+
+@app.get("/lcd", response_class=HTMLResponse)
+async def server():
+    html_file = open("light_control_text_input.html", 'r').read()
     return html_file
 
 

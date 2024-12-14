@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Light Control</title>
+    <title>Text Input Control</title>
     <style>
         body {
             margin: 0;
@@ -24,7 +24,19 @@
 
         .button-container {
             display: flex;
+            flex-direction: column;
             gap: 20px;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            font-size: 1.2rem;
+            padding: 10px;
+            border-radius: 15px;
+            border: none;
+            margin-bottom: 20px;
+            width: 250px;
+            text-align: center;
         }
 
         button {
@@ -48,18 +60,6 @@
             transform: scale(1.05);
         }
 
-        button#on {
-            background: linear-gradient(45deg, #00c6ff, #0072ff);
-        }
-
-        button#off {
-            background: linear-gradient(45deg, #f7971e, #ffd200);
-        }
-
-        button#switch {
-            background: linear-gradient(45deg, #9d50bb, #6e48aa);
-        }
-
         .status {
             margin-top: 2rem;
             font-size: 1.5rem;
@@ -68,11 +68,10 @@
     </style>
 </head>
 <body>
-    <h1>Light Control</h1>
+    <h1>Text Input Control</h1>
     <div class="button-container">
-        <button id="on">Turn On</button>
-        <button id="off">Turn Off</button>
-        <button id="switch">Toggle</button>
+        <input type="text" id="textInput" placeholder="Enter text here...">
+        <button id="submit">Submit</button>
     </div>
     <div class="status" id="status">Status: Ready</div>
 
@@ -96,9 +95,15 @@
                 });
         }
 
-        document.getElementById('on').addEventListener('click', () => sendPostRequest(1, 'on'));
-        document.getElementById('off').addEventListener('click', () => sendPostRequest(1, 'off'));
-        document.getElementById('switch').addEventListener('click', () => sendPostRequest(1, 'switch'));
+        document.getElementById('submit').addEventListener('click', () => {
+            const textInput = document.getElementById('textInput').value;
+            if (textInput.trim()) {
+                sendPostRequest(2, textInput);
+            } else {
+                statusDiv.textContent = 'Status: Please enter some text!';
+            }
+        });
     </script>
 </body>
 </html>
+
